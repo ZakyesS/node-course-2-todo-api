@@ -1,7 +1,9 @@
+const _ = require('lodash');
+
 const {ObjectID} = require('mongodb');
 
-let express = require('express');
-let bodyParser = require('body-parser');
+const express = require('express');
+const bodyParser = require('body-parser');
 
 
 let {mongoose} = require('./db/mongoose');  //se le require la conexión que es un js que está exportado en db/
@@ -98,6 +100,31 @@ app.delete('/todos/:id', (req, res) => {    //al método le quise llamar delete,
     });
 
 });    
+
+app.patch('/todos/:id', (req, res) => {
+    let id = req.params.id;
+    let body = _.pick(req.body, ['text', 'completed']); //pick --> coge un objeto, y un array de las propiedades que quieres actualizar 
+                        // y lo hace sin tener que hacerlo nosotros a mano, el pick actualiza automáticamente.
+
+    if(!ObjectID.isValid(id)){
+        return res.status(404).send();
+    }
+    if(_.isBoolean(body.completed) && body.completed){  //si es un la propiedad completed de body es un boolean y completede === true.
+        body.completedAt = new Date().getTime();    //getTime --> devuelve un timestamp de js.
+    }else{ //sino es un boolean o no está completo.
+        body.completed = false;
+        body.completedAt = null;
+    }
+    
+    Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
+        if(!todo){
+            return res.status(404).send();
+        }
+        res.send({todo});
+    }).catch((e) => {
+        res.status(400).send();
+    });
+});
 
 app.listen(3000, () =>{
     console.log('Started on port 3000');
