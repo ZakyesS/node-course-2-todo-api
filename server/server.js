@@ -1,3 +1,5 @@
+const {ObjectID} = require('mongodb');
+
 let express = require('express');
 let bodyParser = require('body-parser');
 
@@ -36,6 +38,37 @@ app.get('/todos', (req, res) => {
         res.status(400).send(e);
     });
 });
+
+/*
+Challenge 
+    validar id{
+        Si no es un id -> devolver un 404 con un send vacio.
+    }
+
+    buscar por id{
+        exito{
+            si hay un todo -> enviarlo
+            sino hay --> enviar un 404 con cuerpo vacío.
+            }
+        },
+        no exito { enviar 400 y un cuerpo vacío.}
+    }
+*/
+
+app.get('/todos/:id', (req, res) => {   
+    let id = req.params.id;  //params -> parametro con la key -> :id
+    if(!ObjectID.isValid(id)){
+        return res.status(404).send();
+    }
+    Todo.findById(id).then((todo) => {
+        if(!todo){return res.status(404).send();}
+       
+        res.send({todo}); // {todo} --> objeto que tiene la propiedad todo, por lo tanto es un array. 
+    }).catch((e) => {
+        res.status(400).send();
+    });
+});
+
 
 app.listen(3000, () =>{
     console.log('Started on port 3000');
