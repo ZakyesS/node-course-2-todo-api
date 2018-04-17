@@ -69,6 +69,36 @@ app.get('/todos/:id', (req, res) => {
     });
 });
 
+/*
+Challenge
+    - obtener id
+    - validarlo -> si no lo es retorna 404
+    - remover doc(todo) por id
+        - exito {
+            - si no hay doc -> enviar 404
+            - si lo hay -> enviarlo con 200
+        }, 
+        - error{
+            - enviar 400 con cuerpo vacío.
+        }
+*/
+
+app.delete('/todos/:id', (req, res) => {    //al método le quise llamar delete, se puede llamar como se quiera.
+    let id = req.params.id;
+    if(!ObjectID.isValid(id)){
+        return res.status(404).send();
+    }
+
+    Todo.findByIdAndRemove(id).then((todo) => {
+        if(!todo){ return res.status(404).send();}
+        
+        res.send({todo});
+    }).catch((e) => {
+        res.status(400).send()
+    });
+
+});    
+
 app.listen(3000, () =>{
     console.log('Started on port 3000');
 });
