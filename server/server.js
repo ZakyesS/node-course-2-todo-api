@@ -115,7 +115,15 @@ app.patch('/todos/:id', (req, res) => {
         body.completed = false;
         body.completedAt = null;
     }
-    
+    /*
+    el findByIdAndUpdate del mongoose es muy parecido al update de mongo, tienes que pasarle 4 campos(filtro,
+    el campo a actualizar con el operador, las opciones y una callback o promise).
+    En este caso se le pasan como parámetros a este método:
+        - filtro(id).
+        - campo a actualizar -> operador $set: y campo body.
+        - opcion -> new: que es como el returnOriginal del mongodb.
+        - promise.
+    */
     Todo.findByIdAndUpdate(id, {$set: body}, {new: true}).then((todo) => {
         if(!todo){
             return res.status(404).send();
