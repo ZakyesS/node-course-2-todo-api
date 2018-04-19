@@ -4,14 +4,22 @@ const request = require('supertest');   //libería para tests, para hacer reques
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
+const todos = [{
+    text: 'First test todo',
+}, {
+    text: 'Second test todo',
+}];
+
+
 beforeEach((done) => {      //comprueba antes de hacer.
     
     //borra toda la collecion Todo y acaba el test
-    Todo.remove({}).then(() => done()); //expression syntax --> lo mismo es esto:
+    Todo.remove({}).then(() => {; //expression syntax --> lo mismo es esto:
     // Todo.remove({}).then(() => {
     //     done();
     // })
-
+    return Todo.insertMany(todos);
+    }).then(() => done());
 });
 
 describe('POST /todos', () =>{  //describimos el grupo 'POST /todos' para los test de esa rura para el met POST.
@@ -29,7 +37,7 @@ describe('POST /todos', () =>{  //describimos el grupo 'POST /todos' para los te
             .end((err, res) => {    //finaliza con una arrow que se le pasa err y res.
                 if(err){ return done(err);};    //si hay error, devuelve done(finaliza el test) con el err.
                 
-                Todo.find().then((todos) => {   //Sino, busca en la collection Todo(todos los todos) y haces unan promise, pasándole los todos.
+                Todo.find({text}).then((todos) => {   //Sino, busca en la collection Todo(todos los todos) y haces unan promise, pasándole los todos.
                     //si hay exito
                     expect(todos.length).toBe(1);   
                     expect(todos[0].text).toBe(text);
@@ -48,9 +56,21 @@ describe('POST /todos', () =>{  //describimos el grupo 'POST /todos' para los te
                 if(err){ return done(err);};
 
                 Todo.find().then((todos) => {
-                    expect(todos.length).toBe(0);
+                    expect(todos.length).toBe(2);
                     done();
                 }).catch((e) => done(e));
             });
+    });
+});
+
+describe('GET /todos', () => {
+    it('Should get all todos', (done) => {
+        request(app)
+            .get('/todos')
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todos.length).toBe(2);
+            })
+            .end(done);
     });
 });
