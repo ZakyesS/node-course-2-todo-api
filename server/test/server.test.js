@@ -1,12 +1,15 @@
 const expect = require('expect');   //libería para usarlo en test para esperar algo(comparar, mayor que, ....).
 const request = require('supertest');   //libería para tests, para hacer request cuando se va a esperar algo de una direccion.
+const {ObjectID} = require('mongodb');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
 const todos = [{
+    _id: new ObjectID(),
     text: 'First test todo',
 }, {
+    _id: new ObjectID(),
     text: 'Second test todo',
 }];
 
@@ -74,3 +77,32 @@ describe('GET /todos', () => {
             .end(done);
     });
 });
+
+describe('GET /todos/:id', () => {
+    it('Should return todo doc', (done) => {
+        request(app)
+        .get(`/todos/${todos[0]._id.toHexString()}`)   //toHexString --> convierte un objtect a id en string.
+        .expect(200)
+        .expect((res) => {
+            expect(res.body.todo.text).toBe(todos[0].text);
+        })
+        .end(done);
+    });
+
+    //challenge
+
+    it('Should return 404 if todo not found', (done) =>{
+        let hexId = new ObjectID().toHexString();
+        request(app)
+        .get(`/todos/${hexId}`)
+            .expect(404)
+            .end(done);
+
+    });
+    it('Should return 404 for non-object ids', (done) => {
+        request(app)
+            .get('/todos/123abc')
+            .expect(404)
+            .end(done);
+    });
+}); 
