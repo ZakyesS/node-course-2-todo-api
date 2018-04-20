@@ -13,6 +13,7 @@ let {Todo} = require('./models/todo');
 let {User} = require('./models/user');
 
 let app = express();
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json()); //express usa el met use, y se le pasa como parm el bodyParser 
                             //que va a ser un obj y se le pasa el .json() para que lo convierta a string.
@@ -134,7 +135,7 @@ app.patch('/todos/:id', (req, res) => {
     });
 });
 
-app.listen(3000, () =>{
-    console.log('Started on port 3000');
+app.listen(port, () =>{
+    console.log(`Started up at port ${port}`);
 });
 module.exports = {app};
