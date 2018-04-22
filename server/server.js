@@ -1,3 +1,4 @@
+require('./config/config');
 const _ = require('lodash');
 
 const {ObjectID} = require('mongodb');
@@ -13,7 +14,7 @@ let {Todo} = require('./models/todo');
 let {User} = require('./models/user');
 
 let app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 app.use(bodyParser.json()); //express usa el met use, y se le pasa como parm el bodyParser 
                             //que va a ser un obj y se le pasa el .json() para que lo convierta a string.
