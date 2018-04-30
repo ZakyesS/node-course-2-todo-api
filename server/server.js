@@ -12,6 +12,8 @@ let {mongoose} = require('./db/mongoose');  //se le require la conexión que es 
 
 let {Todo} = require('./models/todo');
 let {User} = require('./models/user');
+let {authenticate} = require('./middleware/authenticate');
+
 
 let app = express();
 const port = process.env.PORT;
@@ -151,6 +153,13 @@ app.post('/users', (req, res) => {
         res.status(400).send(e);    
     });
 });
+
+//middleware
+
+app.get('/users/me', authenticate, (req, res) => {
+    res.send(req.user);    
+});
+
 
 
 app.listen(port, () =>{
