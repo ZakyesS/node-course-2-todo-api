@@ -154,7 +154,8 @@ app.post('/users', (req, res) => {
     });
 });
 
-//middleware
+// private route
+// la ruta '/users/me' llama a authenticate y devuelve el usuario si es correcto.
 
 app.get('/users/me', authenticate, (req, res) => {
     res.send(req.user);    
