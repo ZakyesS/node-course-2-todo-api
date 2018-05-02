@@ -138,7 +138,7 @@ app.patch('/todos/:id', (req, res) => {
     });
 });
 
-// POST /users
+// ------------- POST /users --------------------
 app.post('/users', (req, res) => {
     let body = _.pick(req.body, ['email', 'password']);
 
@@ -159,6 +159,23 @@ app.post('/users', (req, res) => {
 
 app.get('/users/me', authenticate, (req, res) => {
     res.send(req.user);    
+});
+
+// -------------- POST /users/login {email, password} -----------------------
+app.post('/users/login', (req, res) => {
+    
+    let body = _.pick(req.body, ['email', 'password']);
+
+    User.findByCredentials(body.email, body.password).then((user) => {  //se llama al mét findByCredentials y se le pasa el email y el pass.
+       
+        return user.generateAuthToken().then((token) => {   //si éxito se genera un nuevo token para ese user(que no tenía).
+        
+            res.header('x-auth', token).send(user); //se envia como respuesta el header x-auth con el token y el user.
+       });
+    }).catch((e) => {
+        res.status(400).send();
+    });
+
 });
 
 

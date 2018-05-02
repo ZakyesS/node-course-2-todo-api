@@ -82,6 +82,29 @@ UserSchema.statics.findByToken = function(token) {
     });
 };
 
+UserSchema.statics.findByCredentials = function(email, password) {  //nuevo mét para que busque por el email y el pass.
+    let User = this;
+    
+    return User.findOne({email}).then((user) => {
+        if(!user){
+            return Promise.reject();
+        }
+
+        return new Promise((resolve, reject) => {
+            bcrypt.compare(password, user.password, (err, res) => { //compara el passw pasado(text plano) con el que hay en la db(hasheado).
+                if(res){
+                    resolve(user);  //si res === true resuelve y envia el user.
+                }
+                else{
+                    reject();   //rechaza y envia cuerpo vacío.
+                }
+            });
+            
+        });
+    });
+};
+
+
 UserSchema.pre('save', function(next) { //antes de guardar haz lo siguiente:
     let user = this;
     if(user.isModified('password')){    //comprobar si el password es modificado.
