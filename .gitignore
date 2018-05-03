@@ -1,4 +1,3 @@
 node_modules/
 package-lock.json
-playground/prueba.js
-playground/prueba2.js
+server/config/config.json
