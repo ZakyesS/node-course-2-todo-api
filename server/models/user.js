@@ -60,6 +60,18 @@ UserSchema.methods.generateAuthToken = function() {   //UserSchema.methods.nombr
     });
 };
 
+// Para eliminar el token del usuario registrado y poder desloguearse.
+UserSchema.methods.removeToken = function(token) {
+    let user = this;
+
+    return user.update({
+        $pull: {    //$pull --> elimina todo lo que contiene un array(tokens).
+            tokens: {token}
+                // token: token
+        }
+    });
+};
+
 
 //
 UserSchema.statics.findByToken = function(token) {
