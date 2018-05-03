@@ -16,7 +16,11 @@ let Todo = mongoose.model('Todo', {
     completedAt: {  //completedAt --> timestamp en el que se completó la tarea(Todo).
         type: Number,
         default: null,
-    }
+    },
+    _creator: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+    },
 });
 
 module.exports = {Todo}; //se exporta el modelo que es igual al objeto Todo.
